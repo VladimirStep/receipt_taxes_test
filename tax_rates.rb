@@ -14,10 +14,11 @@ module TaxRates
     rate
   end
 
-  def calculate_tax_value(price = nil, rate = nil)
+  def calculate_price_with_tax(price = nil, rate = nil)
     raise CalculationError.new 'Price or tax rate not set' unless price && rate
     raise CalculationError.new 'Price or tax rate should be a Number' unless price.is_a?(Numeric) && rate.is_a?(Numeric)
-    tax_round( ( price * rate ) / 100.0 )
+    tax_value = tax_round( ( price * rate ) / 100.0 )
+    ( price + tax_value ).round(2)
   end
 
   def imported?(name)
