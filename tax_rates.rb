@@ -33,7 +33,9 @@ module TaxRates
   end
 
   def tax_round(number)
-    ( (number * 20).round / 20.0 )
+    rounded = ( (number * 20).round / 20.0 )
+    rounded += 0.05 if number > rounded
+    rounded
   end
 
   class CalculationError < StandardError; end
