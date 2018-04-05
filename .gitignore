@@ -1,2 +1,4 @@
 /.bundle
 /.idea/
+/output/*
+!/output/example.txt
