@@ -12,5 +12,5 @@ end
 
 receipt = parse_receipt(input)
 
+receipt.save_csv
 puts receipt.to_std_out
-puts receipt.to_csv

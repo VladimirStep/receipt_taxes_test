@@ -32,4 +32,18 @@ class Receipt
       csv << ["Total: #{'%.2f' % @total}"]
     end
   end
+
+  def save_csv
+    File.open(file_path, 'w') do |f|
+      f.write(self.to_csv)
+    end
+  end
+
+  def generate_filename
+    "#{Time.now.to_i}.csv"
+  end
+
+  def file_path
+    "./output/#{generate_filename}"
+  end
 end
