@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 require 'csv'
-require_relative 'data_parser'
+require_relative 'lib/data_parser'
 
 include DataParser
 
