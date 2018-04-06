@@ -1,51 +1,52 @@
 require_relative 'spec_helper'
 
 RSpec.describe 'Run script' do
-  let(:input_data) { get_data('spec/fixtures/input_data.yml') }
-  let(:executable) { File.expand_path('../../calc.rb', __FILE__) }
-  let(:output1) {
-<<-TEXT
+  input_data = get_data('spec/fixtures/input_data.yml')
+  output_data = {
+    'output1' => <<-TEXT.gsub("\n", "\r\n"),
 1, book, 12.49
 1, music cd, 16.49
 1, chocolate bar, 0.85
 Sales Taxes: 1.50
 Total: 29.83
 TEXT
+    'output2' => <<-TEXT.gsub("\n", "\r\n"),
+1, imported box of chocolates, 10.50
+1, imported bottle of perfume, 54.65
+Sales Taxes: 7.65
+Total: 65.15
+TEXT
+    'output3' => <<-TEXT.gsub("\n", "\r\n")
+1, imported bottle of perfume, 32.19
+1, bottle of perfume, 20.89
+1, packet of headache pills, 9.75
+1, imported box of chocolates, 11.85
+Sales Taxes: 6.70
+Total: 74.68
+TEXT
   }
 
-  context 'without file argument' do
-    let(:command) { "#{executable}\t" }
-    let(:process) { CliProcess.new(command) }
-    let(:input) { input_data['input1'] }
+  let(:executable) { File.expand_path('../../calc.rb', __FILE__) }
 
-    it 'should process data from stdin' do
-      input.each do |line|
-        process.type(line)
+  input_data.each do |input_name, data|
+    context 'with file argument' do
+      before(:each) do
+        @file_path = create_file(data)
       end
-      expect(process).to have_output(output1.gsub("\n", "\r\n"))
 
-      process.kill
-      process.wait
-    end
-  end
+      let(:command) { "#{executable} #{@file_path}" }
+      let(:process) { CliProcess.new(command) }
 
-  context 'with file argument ' do
-    before do
-      @file_path = create_file(input_data['input1'])
-    end
+      it 'should process data from file' do
+        expect(process).to have_output(output_data[input_name.gsub('input', 'output')])
+        sleep 1
+      end
 
-    let(:command) { "#{executable} #{@file_path}\t" }
-    let(:process) { CliProcess.new(command) }
-
-    it 'should process data from file' do
-      expect(process).to have_output(output1.gsub("\n", "\r\n"))
-
-      process.kill
-      process.wait
-    end
-
-    after do
-      delete_file(@file_path)
+      after(:each) do
+        process.kill
+        process.wait
+        delete_file(@file_path)
+      end
     end
   end
 end

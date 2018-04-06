@@ -12,8 +12,7 @@ class CliProcess
   end
 
   def has_output?(string_or_regex)
-    result = reader.expect(string_or_regex, timeout)
-    puts result.inspect
+    result = reader.expect(string_or_regex, timeout) rescue nil
     return false if result.nil?
     output << result.first
     true
